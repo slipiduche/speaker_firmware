@@ -1,3 +1,5 @@
+#include <ArduinoJson.h>
+
 #include "includes.h"
 
 void loop() ///nfc LOOP
