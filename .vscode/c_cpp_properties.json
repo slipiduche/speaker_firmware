@@ -6,7 +6,9 @@
                 "C:\\Users\\Claudia\\Documents\\Arduino\\libraries\\ArduinoJson\\src",
                 "C:\\Users\\Claudia\\Documents\\Arduino\\**",
                 "C:\\Users\\Claudia\\Documents\\Arduino\\tools\\**",
-                "C:\\Users\\Claudia\\Documents\\Arduino\\hardware\\espressif\\esp32\\**"
+                "C:\\Users\\Claudia\\Documents\\Arduino\\hardware\\espressif\\esp32\\**",
+                "C:\\Program Files\\WindowsApps\\ArduinoLLC.ArduinoIDE_1.8.33.0_x86__mdqgnx93n4wtt\\libraries\\**",
+                "C:\\Users\\Claudia\\Documents\\Arduino\\libraries\\**"
             ],
             "forcedInclude": [],
             "intelliSenseMode": "msvc-x64",

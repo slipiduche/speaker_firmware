@@ -21,9 +21,11 @@ void loadMqttCommand(String datar)
         serverPoll = 1;
     }
     else if (command["ACTION"]=="START")
-    { //{“ACTION”:/*”START” OR “STOP”*/,”URL”:”URL to song”}
+    {   mp3host=command["HOST"];
+        mp3path=command["PORT"];
+        mp3port=command["PATH"];
         hostreq = true;
-        Serial.println(datar);
+        dbgprint("MQTT command host %s : %d %s",mp3host,mp3port,mp3path);
     }
     else if (command["ACTION"]=="STOP")//(datar.startsWith("{\"ACTION\":\"STOP\"}"))
     {
