@@ -74,7 +74,12 @@ String get_chipidstr()
   ChipId32 = ((uint32_t)(ChipId));
 
   chip = String(ChipId16, HEX) + String(ChipId32, HEX);
+  while(chip.length()<12){
+    chip="0"+chip;
+  }
+
   Serial.println(chip);
+  Serial.println(chip.length());
   return chip;
 }
 

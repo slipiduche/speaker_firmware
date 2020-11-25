@@ -1,4 +1,4 @@
-#define bootX 5
+#define bootX 1
 /***DEBUG_PORT***/
 #define DEBUG 1
 #ifdef DEBUG
@@ -237,7 +237,7 @@ int mp3port = 8114;//3412;
 // Access point name if connection to WiFi network fails.  Also the hostname for WiFi and OTA.
 // Note that the password of an AP must be at least as long as 8 characters.
 // Also used for other naming.
-#define NAME "Speaker"
+#define NAME "SPEAKER"
 // Max number of presets in preferences
 #define MAXPRESETS 200
 // Maximum number of MQTT reconnects before give-up
