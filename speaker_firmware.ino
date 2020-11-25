@@ -56,7 +56,9 @@ void WebComm(void *parameter) ///webloop
         wifi_mqtt_subscribe(topic_s.c_str());
       }
     }
+    claimSPI("mqtt"); // Claim SPI bus
     wifi_mqtt_loop();
+    releaseSPI(); // Release SPI bus
   }
   vTaskDelay(10000);
 }
@@ -80,7 +82,9 @@ void APmode(void *parameter) ///APmode
     
     //Serial.print("APmode() running on core ");
     //Serial.println(xPortGetCoreID());
+    claimSPI("apmode"); // Claim SPI bus
     apweb_loop();
+    releaseSPI(); // Release SPI bus
   }
   vTaskDelay(3000);
 }

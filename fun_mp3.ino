@@ -1210,33 +1210,6 @@ String readprefs(bool output)
 }
 
 //**************************************************************************************************
-//                                     G E T R A D I O S T A T U S                                 *
-//**************************************************************************************************
-// Return preset-, tone- and volume status.                                                        *
-// Included are the presets, the current station, the volume and the tone settings.                *
-//**************************************************************************************************
-String getradiostatus()
-{
-  char pnr[3]; // Preset as 2 character, i.e. "03"
-
-  sprintf(pnr, "%02d", ini_block.newpreset); // Current preset
-  return String("preset=") +                 // Add preset setting
-         String(pnr) +
-         String("\nvolume=") + // Add volume setting
-         String(String(ini_block.reqvol)) +
-         String("\ntoneha=") + // Add tone setting HA
-         String(ini_block.rtone[0]) +
-         String("\ntonehf=") + // Add tone setting HF
-         String(ini_block.rtone[1]) +
-         String("\ntonela=") + // Add tone setting LA
-         String(ini_block.rtone[2]) +
-         String("\ntonelf=") + // Add tone setting LF
-         String(ini_block.rtone[3]);
-}
-
-
-
-//**************************************************************************************************
 //                                   F I N D N S I D                                               *
 //**************************************************************************************************
 // Find the namespace ID for the namespace passed as parameter.                                    *
@@ -1473,10 +1446,10 @@ void mp3Setup()
   timerAlarmWrite(timer, 100000, true);         // Alarm every 100 msec
   timerAlarmEnable(timer);                      // Enable the timer
   delay(1000);                                  // Show IP for a while
-  configTime(ini_block.clk_offset * 3600,
-             ini_block.clk_dst * 3600,
-             ini_block.clk_server.c_str()); // GMT offset, daylight offset in seconds
-  timeinfo.tm_year = 0;                     // Set TOD to illegal
+  // configTime(ini_block.clk_offset * 3600,
+  //            ini_block.clk_dst * 3600,
+  //            ini_block.clk_server.c_str()); // GMT offset, daylight offset in seconds
+  // timeinfo.tm_year = 0;                     // Set TOD to illegal
   
   outchunk.datatyp = QDATA; // This chunk dedicated to QDATA
   // adc1_config_width(ADC_WIDTH_12Bit);
@@ -1720,30 +1693,7 @@ String xmlgethost(String mount)
   return String(tmpstr); // Return final streaming URL.
 }
 
-//**************************************************************************************************
-//                                      H A N D L E S A V E R E Q                                  *
-//**************************************************************************************************
-// Handle save volume/preset/tone.  This will save current settings every 10 minutes to            *
-// the preferences.  On the next restart these values will be loaded.                              *
-// Note that saving prefences will only take place if contents has changed.                        *
-//**************************************************************************************************
-void handleSaveReq()
-{
-  static uint32_t savetime = 0; // Limit save to once per 10 minutes
 
-  if ((millis() - savetime) < 600000) // 600 sec is 10 minutes
-  {
-    return;
-  }
-  savetime = millis(); // Set time of last save
-  Serial.println("Saving presets...");
-  nvssetstr("preset", String(currentpreset));      // Save current preset
-  nvssetstr("volume", String(ini_block.reqvol));   // Save current volue
-  nvssetstr("toneha", String(ini_block.rtone[0])); // Save current toneha
-  nvssetstr("tonehf", String(ini_block.rtone[1])); // Save current tonehf
-  nvssetstr("tonela", String(ini_block.rtone[2])); // Save current tonela
-  nvssetstr("tonelf", String(ini_block.rtone[3])); // Save current tonelf
-}
 
 //**************************************************************************************************
 //                                           M P 3 L O O P                                         *
@@ -2247,10 +2197,13 @@ void playtask(void *parameter)
       default:
         break;
       }
+      
     }
     //esp_task_wdt_reset() ;                                        // Protect against idle cpu
   }
+  vTaskDelay(1000);
   //vTaskDelete ( NULL ) ;                                          // Will never arrive here
+  
 }
 
 //**************************************************************************************************
@@ -2292,9 +2245,9 @@ void spftask(void *parameter)
   {
     handle_spec();                        // Maybe some special funcs?
     vTaskDelay(100 / portTICK_PERIOD_MS); // Pause for a short time
-    adcval = (15 * adcval +               // Read ADC and do some filtering
-              adc1_get_raw(ADC1_CHANNEL_0)) /
-             16;
+    // adcval = (15 * adcval +               // Read ADC and do some filtering
+    //           adc1_get_raw(ADC1_CHANNEL_0)) /
+    //          16;
   }
   //vTaskDelete ( NULL ) ;                                          // Will never arrive here
 }

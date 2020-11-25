@@ -28,7 +28,7 @@ void loadMqttCommand(String datar)
         hostreq = true;
         
     }
-    else if (command["ACTION"]=="STOP")//
+    else if (command["ACTION"]=="STOP")//4edcfab6224 med
     {
         datamode = STOPREQD;
     }

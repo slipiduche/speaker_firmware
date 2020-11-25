@@ -1,0 +1,5 @@
+set1,orbittas,20075194,speaker,12345678,broker.hivemq.com,1883,*,*,1,
+
+
+
+
