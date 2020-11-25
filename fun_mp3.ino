@@ -153,7 +153,7 @@ bool VS1053::sdi_send_buffer(uint8_t *data, size_t len)
 {
   size_t chunk_length; // Length of chunk 32 byte or shorter
   //Serial.print("data=");
-  
+
   data_mode_on();
   while (len) // More to do?
   {
@@ -888,8 +888,7 @@ void IRAM_ATTR timer100()
     time_req = true;          // Yes, show current time request
     if (++bltimer == BL_TIME) // Time to blank the TFT screen?
     {
-      bltimer = 0;  // Yes, reset counter
-      
+      bltimer = 0; // Yes, reset counter
     }
   }
 }
@@ -986,6 +985,7 @@ void stop_mp3client()
   }
   mp3client.flush(); // Flush stream client
   mp3client.stop();  // Stop stream client
+  statusPlay = 2;
 }
 
 //**************************************************************************************************
@@ -993,21 +993,20 @@ void stop_mp3client()
 //**************************************************************************************************
 // Connect to the Internet radio server specified by newpreset.                                    *
 //**************************************************************************************************
-bool connecttohost(String host,String path, uint16_t port )
+bool connecttohost(String host, String path, uint16_t port)
 {
   stop_mp3client(); // Disconnect if still connected
   dbgprint("Connect to new host %s", host.c_str());
-  
- 
-  setdatamode(INIT);         // Start default in metamode
-  chunked = false;           // Assume not chunked
-  
+
+  setdatamode(INIT); // Start default in metamode
+  chunked = false;   // Assume not chunked
+
   dbgprint("Connect to %s on port %d, extension %s",
            String(host), port, String(path));
   if (mp3client.connect(host.c_str(), port))
   {
     dbgprint("Connected to server");
-    
+
     mp3client.print(String("GET ") +
                     path +
                     String(" HTTP/1.0\r\n") +
@@ -1015,9 +1014,11 @@ bool connecttohost(String host,String path, uint16_t port )
                     host +
                     String("\r\n") +
                     String("Connection: close\r\n\r\n"));
+    statusPlay = 1;
     return true;
   }
   dbgprint("Request %s failed!", host.c_str());
+  statusPlay = 2;
   return false;
 }
 
@@ -1038,7 +1039,6 @@ uint32_t ssconv(const uint8_t *bytes)
   }
   return res; // Return the result
 }
-
 
 //**************************************************************************************************
 //                                       R E S E R V E P I N                                       *
@@ -1105,11 +1105,11 @@ void readIOprefs()
       {"pin_tft_bl", &ini_block.tft_bl_pin, -1},   // Display backlight
       {"pin_tft_blx", &ini_block.tft_blx_pin, -1}, // Display backlight (inversed logic)
       {"pin_sd_cs", &ini_block.sd_cs_pin, -1},
-      {"pin_ch376_cs", &ini_block.ch376_cs_pin, -1},   // CH376 CS for USB interface
-      {"pin_ch376_int", &ini_block.ch376_int_pin, -1}, // CH376 INT for USB interfce
-      {"pin_vs_cs", &ini_block.vs_cs_pin, 5},         // VS1053 pins 5
-      {"pin_vs_dcs", &ini_block.vs_dcs_pin, 25},      //25
-      {"pin_vs_dreq", &ini_block.vs_dreq_pin, 4},     //4
+      {"pin_ch376_cs", &ini_block.ch376_cs_pin, -1},      // CH376 CS for USB interface
+      {"pin_ch376_int", &ini_block.ch376_int_pin, -1},    // CH376 INT for USB interfce
+      {"pin_vs_cs", &ini_block.vs_cs_pin, 5},             // VS1053 pins 5
+      {"pin_vs_dcs", &ini_block.vs_dcs_pin, 25},          //25
+      {"pin_vs_dreq", &ini_block.vs_dreq_pin, 4},         //4
       {"pin_shutdown", &ini_block.vs_shutdown_pin, -1},   // Amplifier shut-down pin
       {"pin_shutdownx", &ini_block.vs_shutdownx_pin, -1}, // Amplifier shut-down pin (inversed logic)
       {"pin_spi_sck", &ini_block.spi_sck_pin, 18},
@@ -1368,7 +1368,7 @@ void mp3Setup()
     dbgprint(wvn, "config");
   if (index_html_version < 180102)
     dbgprint(wvn, "index");
-  
+
   if (defaultprefs_version < 180816)
     dbgprint(wvn, "defaultprefs");
   // Print some memory and sketch info
@@ -1440,7 +1440,7 @@ void mp3Setup()
   delay(10);
   //vs1053player->switchToMp3Mode();
   vs1053player->setVolume(80);
- 
+
   timer = timerBegin(0, 80, true);              // User 1st timer with prescaler 80
   timerAttachInterrupt(timer, &timer100, true); // Call timer100() on timer alarm
   timerAlarmWrite(timer, 100000, true);         // Alarm every 100 msec
@@ -1450,7 +1450,7 @@ void mp3Setup()
   //            ini_block.clk_dst * 3600,
   //            ini_block.clk_server.c_str()); // GMT offset, daylight offset in seconds
   // timeinfo.tm_year = 0;                     // Set TOD to illegal
-  
+
   outchunk.datatyp = QDATA; // This chunk dedicated to QDATA
   // adc1_config_width(ADC_WIDTH_12Bit);
   // adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_0db);
@@ -1693,8 +1693,6 @@ String xmlgethost(String mount)
   return String(tmpstr); // Return final streaming URL.
 }
 
-
-
 //**************************************************************************************************
 //                                           M P 3 L O O P                                         *
 //**************************************************************************************************
@@ -1773,19 +1771,14 @@ void mp3Loop()
     return;
   }
 
-  
-  if (hostreq) // 
+  if (hostreq) //
   {
     hostreq = false;
     currentpreset = ini_block.newpreset; // Remember current preset
 
-    
-    
-    connecttohost(String(mp3host),String(mp3path),mp3port); // Switch to new host
+    connecttohost(String(mp3host), String(mp3path), mp3port); // Switch to new host
   }
 }
-
-
 
 //**************************************************************************************************
 //                                    C H K H D R L I N E                                          *
@@ -1929,7 +1922,7 @@ void handlebyte_ch(uint8_t b)
         if (lcml.startsWith("location: http://")) // Redirection?
         {
           //host = metaline.substring(17); // Yes, get new URL
-          hostreq = true;                // And request this one
+          hostreq = true; // And request this one
         }
         if (lcml.indexOf("content-type") >= 0) // Line with "Content-Type: xxxx/yyy"
         {
@@ -1950,7 +1943,7 @@ void handlebyte_ch(uint8_t b)
         {
           metaint = metaline.substring(12).toInt(); // Found metaint tag, read the value
         }
-        
+
         else if (lcml.startsWith("transfer-encoding:"))
         {
           // Station provides chunked transfer
@@ -2013,7 +2006,7 @@ void handlebyte_ch(uint8_t b)
         // Sometimes it is just other info like:
         // "StreamTitle='60s 03 05 Magic60s';StreamUrl='';"
         // Isolate the StreamTitle, remove leading and trailing quotes if present.
-        showstreamtitle(metalinebf);       // Show artist and title if present in metadata
+        showstreamtitle(metalinebf); // Show artist and title if present in metadata
         //mqttpub.trigger(MQTT_STREAMTITLE); // Request publishing to MQTT
       }
       if (metalinebfx > (METASIZ - 10)) // Unlikely metaline length?
@@ -2066,7 +2059,7 @@ void handlebyte_ch(uint8_t b)
         dbgprint("Switch to PLAYLISTDATA, " // For debug
                  "search for entry %d",
                  playlist_num);
-        setdatamode(PLAYLISTDATA);         // Expecting data now
+        setdatamode(PLAYLISTDATA); // Expecting data now
         //mqttpub.trigger(MQTT_PLAYLISTPOS); // Playlistposition to MQTT
         return;
       }
@@ -2081,7 +2074,6 @@ void handlebyte_ch(uint8_t b)
       LFcount = 0; // Reset double CRLF detection
     }
   }
-  
 }
 
 //**************************************************************************************************
@@ -2114,7 +2106,6 @@ String getContentType(String filename)
   return "text/plain";
 }
 
-
 //**************************************************************************************************
 //                                         C H O M P                                               *
 //**************************************************************************************************
@@ -2135,17 +2126,10 @@ void chomp(String &str)
   str.trim(); // Remove spaces and CR
 }
 
-
-
-
-
-
 //**************************************************************************************************
 //* Function that are called from spftask.                                                         *
 //* Note that some device dependent function are place in the *.h files.                           *
 //**************************************************************************************************
-
-
 
 //**************************************************************************************************
 //                                     P L A Y T A S K                                             *
@@ -2197,13 +2181,11 @@ void playtask(void *parameter)
       default:
         break;
       }
-      
     }
     //esp_task_wdt_reset() ;                                        // Protect against idle cpu
   }
   vTaskDelay(1000);
   //vTaskDelete ( NULL ) ;                                          // Will never arrive here
-  
 }
 
 //**************************************************************************************************

@@ -243,6 +243,24 @@ void wifi_mqtt_loop()
         serverPoll = 0;
       }
     }
+    if(statusPlay==1)
+    {
+      if (wifi_mqtt_publish(("SPEAKER/"+String(chipid)), "{\"STATUS\":\"OK\"}"))
+
+      {
+        Serial.print("SE ENVIO STATUS OK");
+        statusPlay=0;
+      }
+    }
+    else if(statusPlay==2)
+    {
+      if (wifi_mqtt_publish(("SPEAKER/"+String(chipid)), "{\"STATUS\":\"DC\"}"))
+
+      {
+        Serial.print("SE ENVIO STATUS DC");
+        statusPlay=0;
+      }
+    }
     mqttdelay = millis();
   }
 }

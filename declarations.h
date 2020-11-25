@@ -613,3 +613,5 @@ touchpin_struct touchpin[] = // Touch pins and programmed function
 #include "favicon_ico.h"
 #include "defaultprefs.h"
 
+int statusPlay=0;
+
