@@ -245,19 +245,19 @@ void wifi_mqtt_loop()
     }
     if(statusPlay==1)
     {
-      if (wifi_mqtt_publish(("SPEAKER/"+String(chipid)), "{\"STATUS\":\"OK\"}"))
+      if (wifi_mqtt_publish(("SPEAKER/"+String(chipid)), "{\"STATUS\":\"PLAYING\"}"))
 
       {
-        Serial.print("SE ENVIO STATUS OK");
+        Serial.print("SE ENVIO STATUS Playing");
         statusPlay=0;
       }
     }
     else if(statusPlay==2)
     {
-      if (wifi_mqtt_publish(("SPEAKER/"+String(chipid)), "{\"STATUS\":\"DC\"}"))
+      if (wifi_mqtt_publish(("SPEAKER/"+String(chipid)), "{\"STATUS\":\"OK\"}"))
 
       {
-        Serial.print("SE ENVIO STATUS DC");
+        Serial.print("SE ENVIO STATUS ok");
         statusPlay=0;
       }
     }
