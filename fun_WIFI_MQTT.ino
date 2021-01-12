@@ -250,6 +250,7 @@ void wifi_mqtt_loop()
       {
         Serial.print("SE ENVIO STATUS Playing");
         statusPlay=0;
+        hostreq = true;
       }
     }
     else if(statusPlay==2)

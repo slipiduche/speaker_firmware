@@ -25,7 +25,8 @@ void loadMqttCommand(String datar)
         mp3path=command["PATH"];
         mp3port=command["PORT"];
         dbgprint("MQTT command host %s : %d %s",mp3host,mp3port,mp3path);
-        hostreq = true;
+        
+        statusPlay = 1;
         
     }
     else if (command["ACTION"]=="STOP")//4edcfab6224 med

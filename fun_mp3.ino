@@ -1014,7 +1014,7 @@ bool connecttohost(String host, String path, uint16_t port)
                     host +
                     String("\r\n") +
                     String("Connection: close\r\n\r\n"));
-    statusPlay = 1;
+    
     return true;
   }
   dbgprint("Request %s failed!", host.c_str());
