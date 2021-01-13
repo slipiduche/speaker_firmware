@@ -24,7 +24,8 @@ void loadMqttCommand(String datar)
     {   mp3host=command["HOST"];
         mp3path=command["PATH"];
         mp3port=command["PORT"];
-        dbgprint("MQTT command host %s : %d %s",mp3host,mp3port,mp3path);
+        mp3pathS=String(mp3path);
+        dbgprint("MQTT command host %s : %d %s",mp3host,mp3port,mp3pathS);
         
         statusPlay = 1;
         

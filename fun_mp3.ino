@@ -1776,7 +1776,7 @@ void mp3Loop()
     hostreq = false;
     currentpreset = ini_block.newpreset; // Remember current preset
 
-    connecttohost(String(mp3host), String(mp3path), mp3port); // Switch to new host
+    connecttohost(mp3host, mp3pathS, mp3port); // Switch to new host
   }
 }
 
