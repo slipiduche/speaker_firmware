@@ -201,7 +201,7 @@ char devName[11] = "room-x";
 ///mp3
 const char *mp3host="airspectrum.cdnstream1.com";//"sdrorbittas.sytes.net";
 const char *mp3path= "/1648_128";//"/audio/andrew_rayel_impulse.mp3";
-String mprhostS, mp3pathS;
+String mp3hostS, mp3pathS;
 
 int mp3port = 8114;//3412;
 
