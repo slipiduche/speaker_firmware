@@ -1014,7 +1014,7 @@ bool connecttohost(String host, String path, uint16_t port)
                     host +
                     String("\r\n") +
                     String("Connection: close\r\n\r\n"));
-    
+
     return true;
   }
   dbgprint("Request %s failed!", host.c_str());
@@ -1107,9 +1107,9 @@ void readIOprefs()
       {"pin_sd_cs", &ini_block.sd_cs_pin, -1},
       {"pin_ch376_cs", &ini_block.ch376_cs_pin, -1},      // CH376 CS for USB interface
       {"pin_ch376_int", &ini_block.ch376_int_pin, -1},    // CH376 INT for USB interfce
-      {"pin_vs_cs", &ini_block.vs_cs_pin, 15},             // VS1053 pins 5
+      {"pin_vs_cs", &ini_block.vs_cs_pin, 15},            // VS1053 pins 5
       {"pin_vs_dcs", &ini_block.vs_dcs_pin, 25},          //25
-      {"pin_vs_dreq", &ini_block.vs_dreq_pin, 33},         //4
+      {"pin_vs_dreq", &ini_block.vs_dreq_pin, 33},        //4
       {"pin_shutdown", &ini_block.vs_shutdown_pin, -1},   // Amplifier shut-down pin
       {"pin_shutdownx", &ini_block.vs_shutdownx_pin, -1}, // Amplifier shut-down pin (inversed logic)
       {"pin_spi_sck", &ini_block.spi_sck_pin, 18},
@@ -1743,6 +1743,7 @@ void mp3Loop()
         dbgprint("End of playlist seen");
         setdatamode(STOPPED);
         ini_block.newpreset++; // Go to next preset
+        mp3count++;
       }
     }
     for (int i = 0; i < res; i++)
