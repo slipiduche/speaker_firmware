@@ -839,6 +839,16 @@ void IRAM_ATTR timer10sec()
       {
         datamode = STOPREQD;   // Stop player
         ini_block.newpreset++; // Yes, try next channel
+        if (mp3count < mp3TotalPlaylist)
+        {
+          mp3count++;
+          hostreq = true;
+        }
+        else
+        {
+          mp3count = 1;
+          hostreq = false;
+        }
       }
       morethanonce++; // Count the fails
     }
@@ -1743,17 +1753,7 @@ void mp3Loop()
         dbgprint("End of playlist seen");
         setdatamode(STOPPED);
         ini_block.newpreset++; // Go to next preset
-        if (mp3count < mp3TotalPlaylist)
-        {
-          mp3count++;
-          hostreq = true;
-        }
-        else
-        {
-          mp3count = 1;
-          hostreq = false;
-        }
-      }
+            }
     }
     for (int i = 0; i < res; i++)
     {
