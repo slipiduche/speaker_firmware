@@ -1743,7 +1743,16 @@ void mp3Loop()
         dbgprint("End of playlist seen");
         setdatamode(STOPPED);
         ini_block.newpreset++; // Go to next preset
-        mp3count++;
+        if (mp3count < mp3TotalPlaylist)
+        {
+          mp3count++;
+          hostreq = true;
+        }
+        else
+        {
+          mp3count = 1;
+          hostreq = false;
+        }
       }
     }
     for (int i = 0; i < res; i++)
@@ -1776,7 +1785,7 @@ void mp3Loop()
   {
     hostreq = false;
     currentpreset = ini_block.newpreset; // Remember current preset
-
+    String playlistpath = mp3pathS + "/" + String(mp3count);
     connecttohost(mp3hostS, mp3pathS, mp3port); // Switch to new host
   }
 }
