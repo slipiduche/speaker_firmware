@@ -27,7 +27,7 @@ void loadMqttCommand(String datar)
         mp3port = command["PORT"];
         mp3hostS = String(mp3host);
         mp3pathS = String(mp3path);
-        mp3TotalPlaylist = command["SONGLIMIT"];
+        mp3TotalPlaylist = command["TRACKS"];
         dbgprint("MQTT command host %s : %d %s", mp3hostS, mp3port, mp3pathS);
 
         statusPlay = 1;
