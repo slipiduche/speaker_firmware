@@ -220,9 +220,7 @@ void wifi_mqtt_loop()
   mqttclient.loop();
   if (abs(millis() - mqttdelay) >= 500)
   {
-    
 
-    
     if (serverPoll)
     {
 
@@ -233,23 +231,32 @@ void wifi_mqtt_loop()
         serverPoll = 0;
       }
     }
-    if(statusPlay==1)
+    if (statusPlay == 1)
     {
-      if (wifi_mqtt_publish(("SPEAKER/"+String(chipid)), "{\"STATUS\":\"PLAYING\"}"))
+      if (wifi_mqtt_publish(("SPEAKER/" + String(chipid)), "{\"STATUS\":\"PLAYING\"}"))
 
       {
         Serial.print("SE ENVIO STATUS Playing");
-        statusPlay=0;
+        statusPlay = 0;
         hostreq = true;
       }
     }
-    else if(statusPlay==2)
+    else if (statusPlay == 2)
     {
-      if (wifi_mqtt_publish(("SPEAKER/"+String(chipid)), "{\"STATUS\":\"OK\"}"))
+      if (wifi_mqtt_publish(("SPEAKER/" + String(chipid)), "{\"STATUS\":\"OK\"}"))
 
       {
         Serial.print("SE ENVIO STATUS ok");
-        statusPlay=0;
+        statusPlay = 0;
+      }
+    }
+    else if (statusPlay == 3)
+    {
+      if (wifi_mqtt_publish(("SPEAKER/" + String(chipid)), "{\"STATUS\":\"OK\"}"))
+
+      {
+        Serial.print("SE ENVIO STATUS ok no logro conectar al host");
+        statusPlay = 0;
       }
     }
     mqttdelay = millis();
