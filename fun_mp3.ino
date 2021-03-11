@@ -846,7 +846,7 @@ void IRAM_ATTR timer10sec()
         }
         else
         {
-          mp3count = 1;
+          mp3count = 0;
           hostreq = false;
         }
       }

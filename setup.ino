@@ -26,10 +26,12 @@ void setup()
   }
   else
   {
+    //boottime = bootX;
     setupAPSSID(0);
     save_config1_spiff();
     EEPROM.write(1, bootX); //(pos,data)
     EEPROM.commit();
+    apMode = 1;
   }
   mp3Setup();
 
