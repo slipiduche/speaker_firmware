@@ -1,4 +1,4 @@
-#define bootX 1
+#define bootX 50
 /***DEBUG_PORT***/
 #define DEBUG 1
 #ifdef DEBUG
@@ -180,7 +180,7 @@ bool guardarHorarios = 0;
 int subscribed = 0;
 bool rtcFalla = 0;
 bool wifiLedState = false;
-bool apMode = 0;
+int apMode = 0;
 bool apActivate = 0;
 bool guardarAp = 0;
 String ipRed = "0.0.0.0";

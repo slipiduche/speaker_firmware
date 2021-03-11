@@ -11,9 +11,11 @@ void loop() ///nfc LOOP
     apDelayCount++;
     apDelay = millis();
     if (apDelayCount > 5)
-    { count = 0;
+    {
+      count = 0;
       apMode = 1;
       apActivate = 0;
+      Serial.print("ap forzado");
     }
   }
   wifiLedBlink();
@@ -22,21 +24,25 @@ void loop() ///nfc LOOP
     save_config1_spiff();
     ESP.restart();
   }
+  if (apMode != 1)
+  {
+    mp3Loop();
+  }
 
-  mp3Loop();
+  //mp3Loop();
 }
 void WebComm(void *parameter) ///webloop
 {
 
   for (;;)
   {
-    if ((inicio == 0) && ((apMode == 0)))
+    if ((inicio == 0) && ((apMode != 1)))
     {
       claimSPI("WebComm"); // Claim SPI bus
       wifi_mqtt_setup();
       releaseSPI(); // Release SPI bus
     }
-    if ((inicio == 1) && ((apMode == 0)))
+    if ((inicio == 1) && ((apMode != 1)))
     { //DEBUG_PRINT("inicio1:");
       //DEBUG_PRINTLN(inicio);
       claimSPI("WebComm");                        // Claim SPI bus
@@ -46,6 +52,7 @@ void WebComm(void *parameter) ///webloop
     //Serial.print("WebComm() running on core ");
     // Serial.println(xPortGetCoreID());
     //MQTT
+
     if ((inicio == 2) && ((apMode != 1)))
     {
       // DEBUG_PRINT("inicio2:");
@@ -88,6 +95,7 @@ void WebComm(void *parameter) ///webloop
 
     if (mqttclient.state() == 0 && (apMode != 1))
     {
+      Serial.print("aqui pasando");
       claimSPI("WebComm"); // Claim SPI bus
       wifi_mqtt_loop();
       releaseSPI(); // Release SPI bus
@@ -100,7 +108,7 @@ void APmode(void *parameter) ///APmode
   for (;;)
   {
 
-    if ((apMode) && (!apActivate)) //forzado
+    if ((apMode == 1) && (!apActivate)) //forzado
     {
       apActivate = 1;
       setupAPSSID(0);
