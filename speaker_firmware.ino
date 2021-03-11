@@ -11,7 +11,7 @@ void loop() ///nfc LOOP
     apDelayCount++;
     apDelay = millis();
     if (apDelayCount > 5)
-    {
+    { count = 0;
       apMode = 1;
       apActivate = 0;
     }
