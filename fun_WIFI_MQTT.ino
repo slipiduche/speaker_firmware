@@ -24,7 +24,7 @@ void wifi_mqtt_setup()
   count = 1;
   WiFi.begin(ssid, password);
   DEBUG_PRINTLN("wifi connecting...");
-  while (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED && apMode != 1)
   {
     delay(500);
     DEBUG_PRINT(".");
@@ -86,7 +86,7 @@ void wifi_mqtt_reconnect_setup(char mqtttopic[120], char mqtttopic2[120])
 {
   String topic_s = "";
   bussyMqtt = 1;
-  if ((WiFi.status() == WL_CONNECTED) && (apMode == 0))
+  if ((WiFi.status() == WL_CONNECTED) && (apMode != 1))
   {
     while (!mqttclient.connected())
     {
@@ -143,7 +143,7 @@ void wifi_mqtt_reconnect_setup(char mqtttopic[120], char mqtttopic2[120])
   {
     reconnect++;
 
-    if ((reconnect > 1) && (apMode == 0) && WiFi.status() != WL_CONNECTED)
+    if ((reconnect > 1) && (apMode != 1) && WiFi.status() != WL_CONNECTED)
     {
       //apMode = 1;
       reconnect = 0;

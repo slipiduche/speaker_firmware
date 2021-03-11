@@ -5,7 +5,7 @@
 void loop() ///nfc LOOP
 {           //Serial.print("nfcloop running on core ");
   // Serial.println(xPortGetCoreID());
-  if (!digitalRead(0) && apMode == 0 && (abs(millis() - apDelay) >= 500))
+  if (!digitalRead(0) && (apMode == 0) && (abs(millis() - apDelay) >= 500))
   {
 
     apDelayCount++;
