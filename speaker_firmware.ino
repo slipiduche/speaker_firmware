@@ -26,6 +26,7 @@ void loop() ///nfc LOOP
   }
   if (apMode == 2)
   {
+    DEBUG_PRINT("Listo para intentar reproducir");
     //mp3Loop();
   }
 
