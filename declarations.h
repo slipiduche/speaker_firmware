@@ -1,4 +1,4 @@
-#define bootX 2
+#define bootX 8
 /***DEBUG_PORT***/
 #define DEBUG 1
 #ifdef DEBUG
@@ -617,3 +617,4 @@ int statusPlay = 0;
 //////
 long apDelay = 0;
 int apDelayCount = 0;
+bool goAP=0;

@@ -1,6 +1,11 @@
 
 void web_setup(void)
-{ 
+{
+  if (apMode == 1)
+  {
+    count = 0;
+    WiFi.disconnect(true);
+  }
   DEBUG_PRINTLN("Creating Accesspoint");
   WiFi.softAP(ssid2, password2); //Create Access Point
   DEBUG_PRINT("AP IP address:\t");

@@ -13,7 +13,11 @@ void loop() ///nfc LOOP
     if (apDelayCount > 5)
     {
       count = 0;
-      apMode = 1;
+      if (apMode == 0)
+      {
+        apMode = 1;
+      }
+
       apActivate = 0;
       Serial.print("ap forzado");
     }
@@ -26,8 +30,8 @@ void loop() ///nfc LOOP
   }
   if (apMode == 2)
   {
-    DEBUG_PRINT("Listo para intentar reproducir");
-    //mp3Loop();
+    //DEBUG_PRINT("Listo para intentar reproducir");
+    mp3Loop();
   }
 
   //mp3Loop();
@@ -37,10 +41,15 @@ void WebComm(void *parameter) ///webloop
 
   for (;;)
   {
-    if ((inicio == 0) && ((apMode != 1)))
+    if ((inicio == 0) && (goAP == 0))
     {
       claimSPI("WebComm"); // Claim SPI bus
       wifi_mqtt_setup();
+      if (apMode != 0)
+      {
+        goAP = 1;
+      }
+
       releaseSPI(); // Release SPI bus
     }
     if ((inicio == 1) && ((apMode != 1)))
@@ -96,7 +105,7 @@ void WebComm(void *parameter) ///webloop
 
     if (mqttclient.state() == 0 && (apMode != 1))
     {
-      Serial.print("aqui pasando");
+      ///Serial.print("aqui pasando");
       claimSPI("WebComm"); // Claim SPI bus
       wifi_mqtt_loop();
       releaseSPI(); // Release SPI bus
@@ -109,7 +118,7 @@ void APmode(void *parameter) ///APmode
   for (;;)
   {
 
-    if ((apMode == 1) && (!apActivate)) //forzado
+    if ((apMode == 1) && (!apActivate) && goAP == 1) //forzado
     {
       apActivate = 1;
       setupAPSSID(0);
@@ -123,9 +132,10 @@ void APmode(void *parameter) ///APmode
       setupAPSSID(1);
       web_setup();
       apMode = 2;
+      goAP == 1;
     }
-    if (apMode != 0 && apActivate == 1) /// apMode 1 forzado  2 ya conectado a una red wifi
-    {                                   //Serial.print("APmode() running on core ");
+    if (apMode != 0 && apActivate == 1 && goAP == 1) /// apMode 1 forzado  2 ya conectado a una red wifi
+    {                                                //Serial.print("APmode() running on core ");
       //Serial.println(xPortGetCoreID());
       claimSPI("apmode"); // Claim SPI bus
       apweb_loop();
