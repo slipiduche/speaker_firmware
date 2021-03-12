@@ -23,6 +23,9 @@ void wifi_mqtt_setup()
   if (apMode != 1)
 
   {
+    DEBUG_PRINTLN("wifi connecting...");
+    DEBUG_PRINTLN(ssid);
+    DEBUG_PRINTLN(password);
     bussyMqtt = 1;
     count = 1;
     WiFi.begin(ssid, password);

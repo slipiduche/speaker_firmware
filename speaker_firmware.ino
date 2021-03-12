@@ -24,9 +24,9 @@ void loop() ///nfc LOOP
     save_config1_spiff();
     ESP.restart();
   }
-  if (apMode != 1)
+  if (apMode == 2)
   {
-    mp3Loop();
+    //mp3Loop();
   }
 
   //mp3Loop();
@@ -123,8 +123,8 @@ void APmode(void *parameter) ///APmode
       web_setup();
       apMode = 2;
     }
-    if (apMode != 0) /// apMode 1 forzado  2 ya conectado a una red wifi
-    {                //Serial.print("APmode() running on core ");
+    if (apMode != 0 && apActivate == 1) /// apMode 1 forzado  2 ya conectado a una red wifi
+    {                                   //Serial.print("APmode() running on core ");
       //Serial.println(xPortGetCoreID());
       claimSPI("apmode"); // Claim SPI bus
       apweb_loop();

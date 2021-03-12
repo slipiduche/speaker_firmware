@@ -1,4 +1,4 @@
-#define bootX 50
+#define bootX 2
 /***DEBUG_PORT***/
 #define DEBUG 1
 #ifdef DEBUG
