@@ -23,6 +23,15 @@ void setup()
   if (boottime == bootX)
   {
     read_spiffconfig1(); //alocated in fun_spiff
+    int aP = EEPROM.read(2);
+    if (aP == 25)
+    {
+      apMode = 1;
+      goAP = 1;
+      EEPROM.write(2, 0); //(pos,data)
+      EEPROM.commit();
+      DEBUG_PRINT("AP eeprom");
+    }
   }
   else
   {
@@ -32,6 +41,7 @@ void setup()
     EEPROM.write(1, bootX); //(pos,data)
     EEPROM.commit();
     apMode = 1;
+    goAP = 1;
   }
   mp3Setup();
 

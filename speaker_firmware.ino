@@ -12,6 +12,11 @@ void loop() ///nfc LOOP
     apDelay = millis();
     if (apDelayCount > 5)
     {
+      while (!digitalRead(0))
+      {
+        /* code */
+      }
+
       count = 0;
       if (apMode == 0)
       {
@@ -19,7 +24,11 @@ void loop() ///nfc LOOP
       }
 
       apActivate = 0;
+
       Serial.print("ap forzado");
+      EEPROM.write(2, 25); //(pos,data) saber si entra en AP forzado
+      EEPROM.commit();
+      ESP.restart();
     }
   }
   wifiLedBlink();
@@ -41,7 +50,7 @@ void WebComm(void *parameter) ///webloop
 
   for (;;)
   {
-    if ((inicio == 0) && (goAP == 0))
+    if ((inicio == 0) && (goAP == 0) && apMode != 1)
     {
       claimSPI("WebComm"); // Claim SPI bus
       wifi_mqtt_setup();
