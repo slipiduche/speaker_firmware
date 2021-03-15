@@ -26,11 +26,14 @@ void setup()
     int aP = EEPROM.read(2);
     if (aP == 25)
     {
-      apMode = 1;
-      goAP = 1;
+
+      setupAPSSID(0);
+      save_config1_spiff();
       EEPROM.write(2, 0); //(pos,data)
       EEPROM.commit();
-      DEBUG_PRINT("AP eeprom");
+      apMode = 1;
+      goAP = 1;
+      DEBUG_PRINTLN("eeprom AP");
     }
   }
   else
