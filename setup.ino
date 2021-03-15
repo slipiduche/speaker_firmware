@@ -42,6 +42,10 @@ void setup()
   DEBUG_PRINT("begin0:");
   DEBUG_PRINTLN(inicio);
   solicitud_web = 1;
+  WiFi.disconnect();
+  WiFi.mode(WIFI_OFF);
+  delay(1000); // short wait to ensure WIFI_OFF
+  WiFi.persistent(false);
 }
 
 TaskHandle_t Task2, Task3;

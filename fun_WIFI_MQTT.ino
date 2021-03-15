@@ -20,7 +20,7 @@ void callback(char *topic, byte *payload, unsigned int length)
 
 void wifi_mqtt_setup()
 {
-  if (apMode != 1)
+  if (apMode >= 0)
 
   {
     DEBUG_PRINTLN("wifi connecting...");
@@ -30,7 +30,7 @@ void wifi_mqtt_setup()
     count = 1;
     WiFi.begin(ssid, password);
     DEBUG_PRINTLN("wifi connecting...");
-    while (WiFi.status() != WL_CONNECTED && apMode != 1)
+    while (WiFi.status() != WL_CONNECTED && apMode >= 0)
     {
       delay(500);
       DEBUG_PRINT(".");
@@ -47,7 +47,11 @@ void wifi_mqtt_setup()
     if (apMode == 1)
     {
       count = 0;
-      WiFi.disconnect(true);
+      //WiFi.disconnect(true);
+      // WiFi.disconnect();
+      // WiFi.mode(WIFI_OFF);
+      // delay(1000); // short wait to ensure WIFI_OFF
+      // WiFi.persistent(false);
     }
     else
     {

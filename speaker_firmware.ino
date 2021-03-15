@@ -45,12 +45,12 @@ void WebComm(void *parameter) ///webloop
     {
       claimSPI("WebComm"); // Claim SPI bus
       wifi_mqtt_setup();
+
+      releaseSPI(); // Release SPI bus
       if (apMode != 0)
       {
         goAP = 1;
       }
-
-      releaseSPI(); // Release SPI bus
     }
     if ((inicio == 1) && ((apMode != 1)))
     { //DEBUG_PRINT("inicio1:");
