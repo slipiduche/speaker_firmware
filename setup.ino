@@ -59,6 +59,7 @@ void setup()
   WiFi.mode(WIFI_OFF);
   delay(1000); // short wait to ensure WIFI_OFF
   WiFi.persistent(false);
+  WiFi.mode(WIFI_AP_STA);
 }
 
 TaskHandle_t Task2, Task3;
