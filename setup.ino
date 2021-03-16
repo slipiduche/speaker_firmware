@@ -23,13 +23,28 @@ void setup()
   if (boottime == bootX)
   {
     read_spiffconfig1(); //alocated in fun_spiff
+    int aP = EEPROM.read(2);
+    if (aP == 25)
+    {
+
+      setupAPSSID(0);
+      save_config1_spiff();
+      EEPROM.write(2, 0); //(pos,data)
+      EEPROM.commit();
+      apMode = 1;
+      goAP = 1;
+      DEBUG_PRINTLN("eeprom AP");
+    }
   }
   else
   {
+    //boottime = bootX;
     setupAPSSID(0);
     save_config1_spiff();
     EEPROM.write(1, bootX); //(pos,data)
     EEPROM.commit();
+    apMode = 1;
+    goAP = 1;
   }
   mp3Setup();
 
@@ -40,6 +55,11 @@ void setup()
   DEBUG_PRINT("begin0:");
   DEBUG_PRINTLN(inicio);
   solicitud_web = 1;
+  WiFi.disconnect();
+  WiFi.mode(WIFI_OFF);
+  delay(1000); // short wait to ensure WIFI_OFF
+  WiFi.persistent(false);
+  WiFi.mode(WIFI_AP_STA);
 }
 
 TaskHandle_t Task2, Task3;

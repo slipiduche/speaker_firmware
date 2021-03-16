@@ -20,48 +20,67 @@ void callback(char *topic, byte *payload, unsigned int length)
 
 void wifi_mqtt_setup()
 {
-  bussyMqtt = 1;
-  count = 1;
-  WiFi.begin(ssid, password);
-  DEBUG_PRINTLN("wifi connecting...");
-  while (WiFi.status() != WL_CONNECTED)
+  if (apMode >= 0)
+
   {
-    delay(500);
-    DEBUG_PRINT(".");
-    count++;
-    if (count > 50)
+    DEBUG_PRINTLN("wifi connecting...");
+    DEBUG_PRINTLN(ssid);
+    DEBUG_PRINTLN(password);
+    bussyMqtt = 1;
+    count = 1;
+    WiFi.begin(ssid, password);
+    DEBUG_PRINTLN("wifi connecting...");
+    while (WiFi.status() != WL_CONNECTED && apMode >= 0)
+    {
+      delay(500);
+      DEBUG_PRINT(".");
+      count++;
+      if (count > 50)
+      {
+        count = 0;
+        // apMode = 1;
+        // setupAPSSID(0);
+        break;
+      }
+      //wifiLedBlink();
+    }
+    if (apMode == 1)
     {
       count = 0;
-      apMode = 1;
-      setupAPSSID(0);
-      break;
+      //WiFi.disconnect(true);
+      // WiFi.disconnect();
+      // WiFi.mode(WIFI_OFF);
+      // delay(1000); // short wait to ensure WIFI_OFF
+      // WiFi.persistent(false);
     }
-    wifiLedBlink();
+    else
+    {
+      if (count > 0)
+      {
+        DEBUG_PRINTLN("");
+        DEBUG_PRINT(ssid);
+        DEBUG_PRINT(" RSSI:");
+        WRSSI = String(WiFi.RSSI());
+        DEBUG_PRINTLN(WRSSI);
+        DEBUG_PRINTLN("WiFi connected");
+        DEBUG_PRINTLN("STATION IP address: ");
+
+        ipRed = String(WiFi.localIP()[0]) + "." + String(WiFi.localIP()[1]) + "." + String(WiFi.localIP()[2]) + "." + String(WiFi.localIP()[3]);
+        DEBUG_PRINTLN(ipRed);
+        cambioIp = 1;
+        count = 0;
+      }
+      String MQTTPORT = String(MQTTPort);
+      DEBUG_PRINTLN(MQTTHost);
+      DEBUG_PRINTLN(MQTTPORT.toInt());
+
+      mqttclient.setServer(MQTTHost, MQTTPORT.toInt());
+      mqttclient.setCallback(callback);
+
+      wifi_mqtt_reconnect_setup(MQTTTopic, MQTTTopic2);
+      bussyMqtt = 0;
+    }
   }
-  if (count > 0)
-  {
-    DEBUG_PRINTLN("");
-    DEBUG_PRINT(ssid);
-    DEBUG_PRINT(" RSSI:");
-    WRSSI = String(WiFi.RSSI());
-    DEBUG_PRINTLN(WRSSI);
-    DEBUG_PRINTLN("WiFi connected");
-    DEBUG_PRINTLN("STATION IP address: ");
-
-    ipRed = String(WiFi.localIP()[0]) + "." + String(WiFi.localIP()[1]) + "." + String(WiFi.localIP()[2]) + "." + String(WiFi.localIP()[3]);
-    DEBUG_PRINTLN(ipRed);
-    cambioIp = 1;
-    count = 0;
-  }
-  String MQTTPORT = String(MQTTPort);
-  DEBUG_PRINTLN(MQTTHost);
-  DEBUG_PRINTLN(MQTTPORT.toInt());
-
-  mqttclient.setServer(MQTTHost, MQTTPORT.toInt());
-  mqttclient.setCallback(callback);
-
-  wifi_mqtt_reconnect_setup(MQTTTopic, MQTTTopic2);
-  bussyMqtt = 0;
 }
 
 void wifi_mqtt_reconnect(char mqtttopic[120], char mqtttopic2[120])
@@ -70,62 +89,23 @@ void wifi_mqtt_reconnect(char mqtttopic[120], char mqtttopic2[120])
   char topicCh[120];
 
   String topic_s = "";
-
-  if ((WiFi.status() == WL_CONNECTED) && (apMode == 0))
+  DEBUG_PRINTLN("");
+  DEBUG_PRINT("pasando por aqui antes de status:");
+  DEBUG_PRINTLN(WiFi.status());
+  if (WiFi.status() != WL_CONNECTED)
   {
-    while (!mqttclient.connected())
-    {
-      DEBUG_PRINT("Attempting MQTT connection...");
-
-      String topic_s = clientId;
-
-      DEBUG_PRINTLN(MQTTUsername);
-      DEBUG_PRINTLN(MQTTPassword);
-      if (mqttclient.connect(clientId.c_str(), MQTTUsername, MQTTPassword))
-      {
-        DEBUG_PRINTLN("WCONNECT PACKET SUCCESS");
-        inicio = 2;
-        wifi_mqtt_publish(topic_s.c_str(), "{\"mqtt\": \"RECONNECTED\"}");
-        topic_s = "";
-
-        topic_s = "SERVER/POLL";
-        DEBUG_PRINTLN(topic_s);
-        wifi_mqtt_subscribe(topic_s.c_str());
-        topic_s = "";
-        topic_s = "SERVER/" + chipid;
-        DEBUG_PRINTLN(topic_s);
-        wifi_mqtt_subscribe(topic_s.c_str());
-        reconnect = 0;
-        bussyMqtt = 0;
-      }
-      else
-      {
-        DEBUG_PRINT("failed, rc=");
-        DEBUG_PRINT(mqttclient.state());
-        DEBUG_PRINTLN(" try again in 5 seconds");
-#ifdef AP
-
-#endif
-        reconnect++;
-
-        if ((reconnect > 4) && (apMode == 0))
-        {
-          apMode = 1;
-          reconnect = 0;
-          WiFi.reconnect();
-          inicio = 1;
-        }
-      }
-      wifiLedBlink();
-    }
+    DEBUG_PRINT("pasando por aqui antes de conectar wifi:");
+    wifi_mqtt_setup();
   }
+  wifi_mqtt_reconnect_setup(MQTTTopic, MQTTTopic2);
+  bussyMqtt = 0;
 }
 
 void wifi_mqtt_reconnect_setup(char mqtttopic[120], char mqtttopic2[120])
 {
   String topic_s = "";
   bussyMqtt = 1;
-  if ((WiFi.status() == WL_CONNECTED) && (apMode == 0))
+  if ((WiFi.status() == WL_CONNECTED) && (apMode != 1))
   {
     while (!mqttclient.connected())
     {
@@ -162,18 +142,47 @@ void wifi_mqtt_reconnect_setup(char mqtttopic[120], char mqtttopic2[120])
 #ifdef AP
 
 #endif
-        reconnect++;
-
-        if ((reconnect > 4) && (apMode == 0))
-        {
-          apMode = 1;
-          reconnect = 0;
-          WiFi.reconnect();
-          inicio = 1;
-          break;
-        }
       }
-      wifiLedBlink();
+      //wifiLedBlink();
+      reconnect++;
+      if ((reconnect > 5) && (apMode == 0))
+      {
+        //apMode = 1;
+        reconnect = 0;
+        WiFi.disconnect(true);
+        WiFi.reconnect();
+        DEBUG_PRINTLN(" reconectando wifi2.");
+        inicio = 1;
+        //ESP.restart();
+        break;
+      }
+    }
+  }
+  else
+  {
+    reconnect++;
+
+    if ((reconnect > 1) && (apMode != 1) && WiFi.status() != WL_CONNECTED)
+    {
+      //apMode = 1;
+      reconnect = 0;
+      WiFi.disconnect(true);
+      WiFi.reconnect();
+      DEBUG_PRINTLN(" reconectando wifi0.");
+      inicio = 1;
+      ESP.restart();
+      return;
+    }
+    if ((reconnect > 5) && (apMode == 0))
+    {
+      //apMode = 1;
+      reconnect = 0;
+      WiFi.disconnect(true);
+      WiFi.reconnect();
+      DEBUG_PRINTLN(" reconectando wifi1.");
+      inicio = 1;
+      ESP.restart();
+      return;
     }
   }
 }
@@ -211,7 +220,7 @@ int wifi_mqtt_subscribe(String mqtttopic)
       wifi_mqtt_publish((clientId), "{\"mqtt\": \"SUBSCRIBED\"}");
       DEBUG_PRINTLN("WSUBSCRIBE PACKET SENT");
       subscribed = 1;
-      apMode = 0;
+      apMode = 2;
       minutosEnApMode = 0;
       bussyMqtt = 0;
       return 1;
@@ -230,9 +239,7 @@ void wifi_mqtt_loop()
   mqttclient.loop();
   if (abs(millis() - mqttdelay) >= 500)
   {
-    
 
-    
     if (serverPoll)
     {
 
@@ -243,23 +250,32 @@ void wifi_mqtt_loop()
         serverPoll = 0;
       }
     }
-    if(statusPlay==1)
+    if (statusPlay == 1)
     {
-      if (wifi_mqtt_publish(("SPEAKER/"+String(chipid)), "{\"STATUS\":\"PLAYING\"}"))
+      if (wifi_mqtt_publish(("SPEAKER/" + String(chipid)), "{\"STATUS\":\"PLAYING\"}"))
 
       {
         Serial.print("SE ENVIO STATUS Playing");
-        statusPlay=0;
+        statusPlay = 0;
         hostreq = true;
       }
     }
-    else if(statusPlay==2)
+    else if (statusPlay == 2)
     {
-      if (wifi_mqtt_publish(("SPEAKER/"+String(chipid)), "{\"STATUS\":\"OK\"}"))
+      if (wifi_mqtt_publish(("SPEAKER/" + String(chipid)), "{\"STATUS\":\"OK\"}"))
 
       {
         Serial.print("SE ENVIO STATUS ok");
-        statusPlay=0;
+        statusPlay = 0;
+      }
+    }
+    else if (statusPlay == 3)
+    {
+      if (wifi_mqtt_publish(("SPEAKER/" + String(chipid)), "{\"STATUS\":\"OK\"}"))
+
+      {
+        Serial.print("SE ENVIO STATUS ok no logro conectar al host");
+        statusPlay = 0;
       }
     }
     mqttdelay = millis();

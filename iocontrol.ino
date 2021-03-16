@@ -21,7 +21,16 @@ bool NFCPOWEROff()
 }
 void wifiLedBlink()
 {
-  if ((subscribed == 0) || (WiFi.status() != WL_CONNECTED) || (mqttclient.state() != 0))
+  if (apMode == 1)
+  {
+    if (abs(millis() - blikDelay) >= 1000)
+    {
+
+      blikDelay = millis();
+      (wifiLedState) ? wifiLedState = wifiLedOff() : wifiLedState = wifiLedOn();
+    }
+  }
+  else if ((subscribed == 0) || (WiFi.status() != WL_CONNECTED) || (mqttclient.state() != 0))
   {
     if (abs(millis() - blikDelay) >= 250)
     {
@@ -30,6 +39,7 @@ void wifiLedBlink()
       (wifiLedState) ? wifiLedState = wifiLedOff() : wifiLedState = wifiLedOn();
     }
   }
+
   else
   {
     wifiLedOn();

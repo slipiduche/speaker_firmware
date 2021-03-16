@@ -16,22 +16,23 @@ void loadMqttCommand(String datar)
     {
         DEBUG_PRINTLN("Ignored...");
     }
-    else if (command["REQUEST"]=="INFO")//{"REQUEST":"INFO"}
+    else if (command["REQUEST"] == "INFO") //{"REQUEST":"INFO"}
     {
         serverPoll = 1;
     }
-    else if (command["ACTION"]=="START")//{"ACTION":"START","HOST":"192.168.0.103","PORT":3412,"PATH":"/audio/andrew_rayel_impulse.mp3"}
-    {   mp3host=command["HOST"];
-        mp3path=command["PATH"];
-        mp3port=command["PORT"];
-        mp3hostS=String(mp3host);
-        mp3pathS=String(mp3path);
-        dbgprint("MQTT command host %s : %d %s",mp3hostS,mp3port,mp3pathS);
-        
+    else if (command["ACTION"] == "START") //{"ACTION":"START","HOST":"192.168.0.103","PORT":3412,"PATH":"/audio/andrew_rayel_impulse.mp3"}
+    {
+        mp3host = command["HOST"];
+        mp3path = command["PATH"];
+        mp3port = command["PORT"];
+        mp3hostS = String(mp3host);
+        mp3pathS = String(mp3path);
+        mp3TotalPlaylist = command["TRACKS"];
+        dbgprint("MQTT command host %s : %d %s", mp3hostS, mp3port, mp3pathS);
+
         statusPlay = 1;
-        
     }
-    else if (command["ACTION"]=="STOP")//4edcfab6224 med
+    else if (command["ACTION"] == "STOP") //4edcfab6224 med
     {
         datamode = STOPREQD;
     }

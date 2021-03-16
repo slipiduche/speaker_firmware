@@ -1,8 +1,8 @@
-#define bootX 1
+#define bootX 9
 /***DEBUG_PORT***/
 #define DEBUG 1
 #ifdef DEBUG
-#define DEBUG_PORT Serial 
+#define DEBUG_PORT Serial
 #define DEBUG_PRINT(x) Serial.print(x)
 #define DEBUG_WRITE(x) Serial.write(x)
 #define DEBUG_PRINTx(x, y) Serial.print(x, y)
@@ -19,7 +19,7 @@
 #define DEBUG_PRINTLNx(x, y)
 #endif
 ////////////////
-#include "EEPROM.h" 
+#include "EEPROM.h"
 #include <RTClib.h>
 RTC_Millis rtcSoft;
 #include <SPI.h>
@@ -41,25 +41,25 @@ WiFiClient client1;
 ESP32WebServer server(80); //web server
 /**SPIFF**/
 #define fun_spiff
-File logFile; 
+File logFile;
 /**** REGISTERS ****/
 //#define devBoard //comment if is final board
-#ifdef  devBoard
-#define wifiled 5                    //32 final board
+#ifdef devBoard
+#define wifiled 5   //32 final board
 #define NFCPOWER 27 // 5 final board
 #else
-#define wifiled 32                    //32 final board
+#define wifiled 32 //32 final board
 #define NFCPOWER 5 // 5 final board
 #endif
-#define RetardoAntirebotePulsador 25 
+#define RetardoAntirebotePulsador 25
 #define salidabajoactiva
-#ifdef salidabajoactiva 
+#ifdef salidabajoactiva
 #define OFF_bit 1
 #define ON_bit 0
 #define OFF HIGH
 #define ON LOW
 #endif
-#ifdef salidaaltoactiva 
+#ifdef salidaaltoactiva
 #define OFF_bit 0
 #define ON_bit 1
 #define OFF LOW
@@ -69,8 +69,8 @@ File logFile;
 /****fun_web Variables****/
 bool noAP = 1;
 int tnoAP = 0;
-String webpage = "";     
-bool SD_present = false; 
+String webpage = "";
+bool SD_present = false;
 /*************/
 unsigned long actualizar_hora = 0;
 unsigned long t_ultima_accion = 0;
@@ -105,10 +105,10 @@ DateTime now;
 int prevmin = 0, prevday = 0;
 int rtcrestart = 0; //
 unsigned long timeout1 = 0, timeout2 = 0;
-bool webwork = 0; 
+bool webwork = 0;
 bool envia = 0;
-int change = 0;  //if changes happens sends data
-int modo_automatico = 0; 
+int change = 0; //if changes happens sends data
+int modo_automatico = 0;
 int numero_horarios = 0;
 bool sal = 0;
 int ciclo_actual = 0;
@@ -118,33 +118,33 @@ int chlength = 0;
 String formdata, vacio = "";
 ///-------------Set wifi network parameters---------------------
 /****WIFI****/
-char ssid[60] = "orbittas";     //WIFI SSID
-char password[60] = "20075194"; //WIFI PASSWORD
-char ssid2[60] = "Speaker";       //AP SSID
+char ssid[60] = "orbittas";      //WIFI SSID
+char password[60] = "20075194";  //WIFI PASSWORD
+char ssid2[60] = "Speaker";      //AP SSID
 char password2[60] = "12345678"; //AP PASSWORD
 String WRSSI;
 /****SPIFF****/
-long int lastposition2 = 0; 
-long int lastposition = 0;  
-long int lastposition3 = 0; 
-long int lastposition4 = 0; 
+long int lastposition2 = 0;
+long int lastposition = 0;
+long int lastposition3 = 0;
+long int lastposition4 = 0;
 //////MQTT
-#define USEWIFIMQTT        
-#include "PubSubClient.h" 
-WiFiClient espClient;     
-PubSubClient mqttclient(espClient); 
+#define USEWIFIMQTT
+#include "PubSubClient.h"
+WiFiClient espClient;
+PubSubClient mqttclient(espClient);
 /****Variables WIFI MQTT****/
 //char host[120] = "broker.mqttdashboard.com";
-char datarecvd[512]; 
-int reconnect = 0;   
+char datarecvd[512];
+int reconnect = 0;
 /****parametros mqtt ****/
-char MQTTHost[120] = "broker.mqttdashboard.com"; 
-char MQTTPort[6] = "1883";                       
-char MQTTClientID[60] = "";                      
-char MQTTTopic[60] = "";                         
-char MQTTTopic2[60] = "";                        
-char MQTTUsername[60] = "*";                     
-char MQTTPassword[120] = "*";                    
+char MQTTHost[120] = "192.168.0.103";
+char MQTTPort[6] = "3000";
+char MQTTClientID[60] = "";
+char MQTTTopic[60] = "";
+char MQTTTopic2[60] = "";
+char MQTTUsername[60] = "*";
+char MQTTPassword[120] = "*";
 uint32_t ChipId32, wait = 0, wait2 = 0, wait3 = 0;
 uint16_t ChipId16;
 uint64_t ChipId;
@@ -165,23 +165,23 @@ char password2_aux[60] = ""; //AP PASSWORD
 char host_aux[120] = "";
 char MQTTUsername_aux[60] = "";
 char MQTTPassword_aux[120] = "";
-char MQTTHost_aux[120] = ""; 
+char MQTTHost_aux[120] = "";
 char MQTTPort_aux[6] = "";
-int changev = 0;  
-int changev2 = 0; 
+int changev = 0;
+int changev2 = 0;
 int inicio = 0;
 int proximo_ciclo_aux = 0;
 int proximo_ciclo_aux1 = 0;
 long int mqttdelay = 0, blikDelay = 0;
-int env_prox = 0; 
+int env_prox = 0;
 bool solicitud_web = 0;
 bool envia_horarios = 0;
 bool guardarHorarios = 0;
-int subscribed = 0; 
+int subscribed = 0;
 bool rtcFalla = 0;
 bool wifiLedState = false;
-bool apMode = 0;
-bool apActivate=0;
+int apMode = 0;
+bool apActivate = 0;
 bool guardarAp = 0;
 String ipRed = "0.0.0.0";
 bool cambioIp = 0;
@@ -189,21 +189,20 @@ long int minutosEnApMode = 0;
 int minutoAuxAp = 0;
 bool cambioFechaHora = false;
 
-
-
 bool bussyMqtt = 0;
 /////
 String Shora = "", Sfecha = "", Sday = "", Smonth = "", Syear = "", Shr = "", Smin = "";
 /////server protocol
-bool serverPoll = 0; /// 
+bool serverPoll = 0; ///
 char devName[11] = "room-x";
 
 ///mp3
-const char *mp3host="airspectrum.cdnstream1.com";//"sdrorbittas.sytes.net";
-const char *mp3path= "/1648_128";//"/audio/andrew_rayel_impulse.mp3";
+const char *mp3host = "airspectrum.cdnstream1.com"; //"sdrorbittas.sytes.net";
+const char *mp3path = "/1648_128";                  //"/audio/andrew_rayel_impulse.mp3";
 String mp3hostS, mp3pathS;
+int mp3count = 0, mp3TotalPlaylist = 1;
 
-int mp3port = 8114;//3412;
+int mp3port = 8114; //3412;
 
 // Define the version number, also used for webserver as Last-Modified header and to
 // check version for update.  The format must be exactly as specified by the HTTP standard!
@@ -213,7 +212,6 @@ int mp3port = 8114;//3412;
 #define UPDATEHOST "smallenburg.nl"            // Host for software updates
 #define BINFILE "/Arduino/Esp32_radio.ino.bin" // Binary file name for update software
 #define TFTFILE "/Arduino/ESP32-Radio.tft"     // Binary file name for update NEXTION image
-
 
 #include <nvs.h>
 #include <WiFiMulti.h>
@@ -430,75 +428,74 @@ enum datamode_t
 
 // Global variables
 
-int numSsid;                          // Number of available WiFi networks
-WiFiMulti wifiMulti;                  // Possible WiFi networks
-ini_struct ini_block;                 // Holds configurable data
-WiFiServer cmdserver(80);             // Instance of embedded webserver, port 80
-WiFiClient mp3client;                 // An instance of the mp3 client, also used for OTA
-WiFiClient cmdclient;                 // An instance of the client for commands
+int numSsid;              // Number of available WiFi networks
+WiFiMulti wifiMulti;      // Possible WiFi networks
+ini_struct ini_block;     // Holds configurable data
+WiFiServer cmdserver(80); // Instance of embedded webserver, port 80
+WiFiClient mp3client;     // An instance of the mp3 client, also used for OTA
+WiFiClient cmdclient;     // An instance of the client for commands
 
-
-HardwareSerial *nxtserial = NULL;     // Serial port for NEXTION (if defined)
-TaskHandle_t maintask;                // Taskhandle for main task
-TaskHandle_t xplaytask;               // Task handle for playtask
-TaskHandle_t xspftask;                // Task handle for special functions
-SemaphoreHandle_t SPIsem = NULL;      // For exclusive SPI usage
-hw_timer_t *timer = NULL;             // For timer
-char timetxt[9];                      // Converted timeinfo
-char cmd[130];                        // Command from MQTT or Serial
-uint8_t tmpbuff[6000];                // Input buffer for mp3 or data stream
-QueueHandle_t dataqueue;              // Queue for mp3 datastream
-QueueHandle_t spfqueue;               // Queue for special functions
-qdata_struct outchunk;                // Data to queue
-qdata_struct inchunk;                 // Data from queue
-uint8_t *outqp = outchunk.buf;        // Pointer to buffer in outchunk
-uint32_t totalcount = 0;              // Counter mp3 data
-datamode_t datamode;                  // State of datastream
-int metacount;                        // Number of bytes in metadata
-int datacount;                        // Counter databytes before metadata
-char metalinebf[METASIZ + 1];         // Buffer for metaline/ID3 tags
-int16_t metalinebfx;                  // Index for metalinebf
-String icystreamtitle;                // Streamtitle from metadata
-String icyname;                       // Icecast station name
-String ipaddress;                     // Own IP-address
-int bitrate;                          // Bitrate in kb/sec
-int mbitrate;                         // Measured bitrate
-int metaint = 0;                      // Number of databytes between metadata
-int16_t currentpreset = -1;           // Preset station playing
+HardwareSerial *nxtserial = NULL; // Serial port for NEXTION (if defined)
+TaskHandle_t maintask;            // Taskhandle for main task
+TaskHandle_t xplaytask;           // Task handle for playtask
+TaskHandle_t xspftask;            // Task handle for special functions
+SemaphoreHandle_t SPIsem = NULL;  // For exclusive SPI usage
+hw_timer_t *timer = NULL;         // For timer
+char timetxt[9];                  // Converted timeinfo
+char cmd[130];                    // Command from MQTT or Serial
+uint8_t tmpbuff[6000];            // Input buffer for mp3 or data stream
+QueueHandle_t dataqueue;          // Queue for mp3 datastream
+QueueHandle_t spfqueue;           // Queue for special functions
+qdata_struct outchunk;            // Data to queue
+qdata_struct inchunk;             // Data from queue
+uint8_t *outqp = outchunk.buf;    // Pointer to buffer in outchunk
+uint32_t totalcount = 0;          // Counter mp3 data
+datamode_t datamode;              // State of datastream
+int metacount;                    // Number of bytes in metadata
+int datacount;                    // Counter databytes before metadata
+char metalinebf[METASIZ + 1];     // Buffer for metaline/ID3 tags
+int16_t metalinebfx;              // Index for metalinebf
+String icystreamtitle;            // Streamtitle from metadata
+String icyname;                   // Icecast station name
+String ipaddress;                 // Own IP-address
+int bitrate;                      // Bitrate in kb/sec
+int mbitrate;                     // Measured bitrate
+int metaint = 0;                  // Number of databytes between metadata
+int16_t currentpreset = -1;       // Preset station playing
 //String host;                          // The URL to connect to or file to play
-String playlist;                      // The URL of the specified playlist
-bool hostreq = false;                 // Request for new host
-bool reqtone = false;                 // New tone setting requested
-bool muteflag = false;                // Mute output
-bool resetreq = false;                // Request to reset the ESP32
-bool updatereq = false;               // Request to update software from remote host
-bool NetworkFound = false;            // True if WiFi network connected
-bool mqtt_on = false;                 // MQTT in use
-String networks;                      // Found networks in the surrounding
-uint16_t mqttcount = 0;               // Counter MAXMQTTCONNECTS
-int8_t playingstat = 0;               // 1 if radio is playing (for MQTT)
-int16_t playlist_num = 0;             // Nonzero for selection from playlist
-fs_type usb_sd = FS_USB;              // SD or USB interface
-uint32_t mp3filelength;               // File length
-bool localfile = false;               // Play from local mp3-file or not
-bool chunked = false;                 // Station provides chunked transfer
-int chunkcount = 0;                   // Counter for chunked transfer
-String http_getcmd;                   // Contents of last GET command
-String http_rqfile;                   // Requested file
-bool http_response_flag = false;      // Response required
-uint16_t ir_value = 0;                // IR code
-uint32_t ir_0 = 550;                  // Average duration of an IR short pulse
-uint32_t ir_1 = 1650;                 // Average duration of an IR long pulse
-struct tm timeinfo;                   // Will be filled by NTP server
-bool time_req = false;                // Set time requested
-uint16_t adcval;                      // ADC value (battery voltage)
-uint32_t clength;                     // Content length found in http header
-uint32_t max_mp3loop_time = 0;        // To check max handling time in mp3loop (msec)
-int16_t scanios;                      // TEST*TEST*TEST
-int16_t scaniocount;                  // TEST*TEST*TEST
-uint16_t bltimer = 0;                 // Backlight time-out counter
-display_t displaytype = T_UNDEFINED;  // Display type
-std::vector<WifiInfo_t> wifilist;     // List with wifi_xx info
+String playlist;                     // The URL of the specified playlist
+bool hostreq = false;                // Request for new host
+bool reqtone = false;                // New tone setting requested
+bool muteflag = false;               // Mute output
+bool resetreq = false;               // Request to reset the ESP32
+bool updatereq = false;              // Request to update software from remote host
+bool NetworkFound = false;           // True if WiFi network connected
+bool mqtt_on = false;                // MQTT in use
+String networks;                     // Found networks in the surrounding
+uint16_t mqttcount = 0;              // Counter MAXMQTTCONNECTS
+int8_t playingstat = 0;              // 1 if radio is playing (for MQTT)
+int16_t playlist_num = 0;            // Nonzero for selection from playlist
+fs_type usb_sd = FS_USB;             // SD or USB interface
+uint32_t mp3filelength;              // File length
+bool localfile = false;              // Play from local mp3-file or not
+bool chunked = false;                // Station provides chunked transfer
+int chunkcount = 0;                  // Counter for chunked transfer
+String http_getcmd;                  // Contents of last GET command
+String http_rqfile;                  // Requested file
+bool http_response_flag = false;     // Response required
+uint16_t ir_value = 0;               // IR code
+uint32_t ir_0 = 550;                 // Average duration of an IR short pulse
+uint32_t ir_1 = 1650;                // Average duration of an IR long pulse
+struct tm timeinfo;                  // Will be filled by NTP server
+bool time_req = false;               // Set time requested
+uint16_t adcval;                     // ADC value (battery voltage)
+uint32_t clength;                    // Content length found in http header
+uint32_t max_mp3loop_time = 0;       // To check max handling time in mp3loop (msec)
+int16_t scanios;                     // TEST*TEST*TEST
+int16_t scaniocount;                 // TEST*TEST*TEST
+uint16_t bltimer = 0;                // Backlight time-out counter
+display_t displaytype = T_UNDEFINED; // Display type
+std::vector<WifiInfo_t> wifilist;    // List with wifi_xx info
 // nvs stuff
 nvs_page nvsbuf;                 // Space for 1 page of NVS info
 const esp_partition_t *nvs;      // Pointer to partition struct
@@ -615,5 +612,9 @@ touchpin_struct touchpin[] = // Touch pins and programmed function
 #include "favicon_ico.h"
 #include "defaultprefs.h"
 
-int statusPlay=0;
+int statusPlay = 0;
 
+//////
+long apDelay = 0;
+int apDelayCount = 0;
+bool goAP=0;
