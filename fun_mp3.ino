@@ -839,7 +839,7 @@ void IRAM_ATTR timer10sec()
       {
         datamode = STOPREQD;   // Stop player
         ini_block.newpreset++; // Yes, try next channel
-        if (mp3count < mp3TotalPlaylist)
+        if (mp3count < mp3TotalPlaylist - 1)
         {
           mp3count++;
           hostreq = true;
